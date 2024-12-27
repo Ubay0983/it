@@ -124,49 +124,53 @@
         <div class="image-container" id="zoomContainer">
             <img src="Zona 5.png" alt="Skematik Zona Bisnis Niaga 5 Cabang Paseh" id="zonaImage">
             
-           <!-- Tooltip Box untuk data dari Google Sheets -->
-           <div class="tooltip-box" id="tooltipBox">
-            <strong>Data SDM Zona Bisnis 5:</strong><br>
-            Jumlah SL: <span id="jumlahSL">-</span><br>
-            DRD bulan ini: <span id="drdBulanIni">-</span><br>
-            Jumlah Pembaca Meter: <span id="jumlahBacaMeter">-</span><br>
-            Jumlah Penagih: <span id="jumlahPenagih">-</span><br>
+            <!-- Tooltip Box untuk data dari Google Sheets -->
+            <div class="tooltip-box" id="tooltipBox">
+                <strong>Data Zona Bisnis 5:</strong><br>
+                Jumlah SL: <span id="jumlahSL">-</span><br>
+                Jumlah m3: <span id="jumlahM3">-</span><br>
+                Pipa PVC: <span id="Pipa PVC">-</span><br>
+                Pipa HDPE: <span id="Pipa HDPE">-</span><br>
+                Pipa Galvanis: <span id="Pipa Galvanis">-</span><br>
+                Total Panjang Pipa : <span id="Total Panjang Pipa">-</span><br>
 
+            </div>
+            
+            <!-- Simple Tooltip untuk tombol -->
+            <div class="simple-tooltip" id="simpleTooltip"></div>
         </div>
-        
-        <!-- Simple Tooltip untuk tombol -->
-        <div class="simple-tooltip" id="simpleTooltip"></div>
-    </div>
-</main>
-<footer>
-    <p>&copy; 2024 IT Perumdam Tirta Medal Kabupaten Sumedang</p>
-</footer>
-<script>
-    async function fetchGoogleSheetData() {
-        const url = 'https://docs.google.com/spreadsheets/d/12m7rdzKbmMvfDWLd6pKbnU1bjhxULJM7_azK2FFb4Og/gviz/tq?tqx=out:json&gid=1351844906';
-        try {
-            const response = await fetch(url);
-            const data = await response.text();
-            const json = JSON.parse(data.substr(47).slice(0, -2));
-            const rows = json.table.rows;
+    </main>
+    <footer>
+        <p>&copy; 2024 IT Perumdam Tirta Medal Kabupaten Sumedang</p>
+    </footer>
+    <script>
+        async function fetchGoogleSheetData() {
+            const url = 'https://docs.google.com/spreadsheets/d/12m7rdzKbmMvfDWLd6pKbnU1bjhxULJM7_azK2FFb4Og/gviz/tq?tqx=out:json&gid=1351844906';
+            try {
+                const response = await fetch(url);
+                const data = await response.text();
+                const json = JSON.parse(data.substr(47).slice(0, -2));
+                const rows = json.table.rows;
 
-            let totalJumlahSL = 0, totalDRDBulanIni = 0 ;
+                let totalJumlahSL = 0, totalJumlahM3 = 0 ;
 
-            rows.forEach(row => {
-                if (row.c) {
-                    const zona = row.c[11] ? row.c[11].v : '';
-                    if (zona === 'Zona Bisnis 5') {
-                        totalJumlahSL += row.c[24] ? parseFloat(row.c[24].v) : 0;
-                        totalDRDBulanIni += row.c[4] ? parseFloat(row.c[4].v) : 0;
+                rows.forEach(row => {
+                    if (row.c) {
+                        const zona = row.c[11] ? row.c[11].v : '';
+                        if (zona === 'Zona Bisnis 5') {
+                            totalJumlahSL += row.c[24] ? parseFloat(row.c[24].v) : 0;
+                            totalJumlahM3 += row.c[3] ? parseFloat(row.c[3].v) : 0;
 
+                        }
                     }
-                }
-            });
+                });
 
-            document.getElementById("jumlahSL").innerText = totalJumlahSL.toLocaleString();
-            document.getElementById("drdBulanIni").innerText = totalDRDBulanIni.toLocaleString();
-            document.getElementById("jumlahBacaMeter").innerText = '1 Orang'.toLocaleString();
-            document.getElementById("jumlahPenagih").innerText = '2 Orang'.toLocaleString();
+                document.getElementById("jumlahSL").innerText = totalJumlahSL.toLocaleString();
+                document.getElementById("jumlahM3").innerText = totalJumlahM3.toLocaleString();
+                document.getElementById("Pipa PVC").innerText = '2.031,3 Meter'.toLocaleString();
+                document.getElementById("Pipa HDPE").innerText = '984 Meter'.toLocaleString();
+                document.getElementById("Pipa Galvanis").innerText = '11,95 Meter'.toLocaleString();
+                document.getElementById("Total Panjang Pipa").innerText = '3.015,3 Meter'.toLocaleString();
 
                 // Menampilkan tooltip saat gambar dihover
                 const tooltipBox = document.getElementById('tooltipBox');

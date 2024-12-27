@@ -108,8 +108,9 @@
     <script>
         const templates = [
             { name: "Skematik Zona Bisnis Cabang Paseh", id: "ZonaBisnis" },
-            { name: "Diagram Struktur Organisasi", id: "DiagramStrukturOrganisasi" },
+            { name: "Dashboard Monitoring Cabang Paseh", id: "DashboardMonitoringCabangPaseh" },
             { name: "Skematik Zona Produksi Cabang Paseh", id: "ZonaProduksi" },
+            { name: "GIS (Geographical Information System)", id: "GIS" },
         ];
 
         function displayTemplates() {
@@ -129,8 +130,10 @@
                 window.location.href = 'zona_bisnis.html';
             } else if (templateId === 'ZonaProduksi') {
                 window.location.href = 'ZonaProduksi.html';
-            } else if (templateId === 'DiagramStrukturOrganisasi') {
-                window.location.href = 'https://docs.google.com/spreadsheets/d/1rYOsRWGmmccAKpjNYfNSoR2fvQD3yKQShStgskArJg8/edit?gid=1191723882#gid=1191723882';
+            } else if (templateId === 'DashboardMonitoringCabangPaseh') {
+                window.location.href = 'https://lookerstudio.google.com/embed/reporting/54537dd8-6ee8-4847-a1fa-4772a0864005/page/p_496xd6y5jd';
+            } else if (templateId === 'GIS') {
+                window.location.href = 'https://pasehweb.gis.co.id/#15.83/-6.791808/107.998944';
             } else {
                 alert(`No page available for: ${templateId}`);
             }
