@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skematik Zona Bisnis 2 Cabang Paseh</title>
+    <style>
+        body {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, sans-serif;
+            background: linear-gradient(to right, #f1edec, #5704f0);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 60px;
+        }
+
+        .header-logo {
+            height: 90px;
+            width: auto;
+        }
+
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 54px;
+            font-weight: bold;
+            margin: 0 20px;
+            color: #f3f0f0;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .draggable-button {
+            position: absolute;
+            padding: 12px 20px;
+            border: 6px;
+            color: darkblue;
+            cursor: pointer;
+            border-radius: 10%;
+            font-size: 22px;
+            min-width: 19px;
+            z-index: 1001;
+            background-color:linear-gradient(to right, #6a11cb, #2575fc);
+            transition: background-color 0.3s;
+        }
+
+        .draggable-button:hover {
+            background-color: rgba(0, 0, 255, 0.5);
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="logo Perumda.png" alt="Logo Perumda" class="header-logo">
+        <div class="header-title">Dashboard Aspek Zona Bisnis Cabang Paseh</div>
+        <img src="Artboard 1.png" alt="Logo Artboard1" class="header-logo">
+    </header>
+    <main>
+        <div class="image-container" id="zoomContainer">
+            <img src="PASEH.png" alt="Dashboard Aspek Zona Bisnis Cabang Paseh" id="zonaImage">
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 IT Perumdam Tirta Medal Kabupaten Sumedang</p>
+    </footer>
+    <script>
+        const initialButtonPositions = [
+            {leftPercent: 58.15, topPercent: 6.18, text: 'ASPEK OPERASIONAL', link: 'AspekOperasional/dashboardPaseh.html'},
+            {leftPercent: 59.55, topPercent: 12.55, text: 'ASPEK KEUANGAN', link: 'AspekKeuangan/dashboardPaseh.html'},
+            {leftPercent: 59.75, topPercent: 18.82, text: 'ASPEK PELAYANAN', link: 'AspekPelayanan/dashboardPaseh.html'},
+            {leftPercent: 79.59, topPercent: 6.18, text: 'ASPEK SDM', link: 'AspekSDM/dashboardPaseh.html'},
+            {leftPercent: 79.13, topPercent: 12.64, text: 'ASPEK HUKUM', link: 'AspekHukum/dashboardPaseh.html'},
+            {leftPercent: 76.87, topPercent: 18.91, text: 'ASPEK PENGAWASAN', link: 'AspekPengawasan/dashboardPaseh.html'},
+        ];
+
+        function createButton(position) {
+            const button = document.createElement('button');
+            button.innerText = position.text;
+            button.className = 'draggable-button';
+            button.style.backgroundColor = position.color;
+            button.dataset.leftPercent = position.leftPercent;
+            button.dataset.topPercent = position.topPercent;
+
+            makeDraggable(button);
+
+            button.addEventListener('click', () => {
+                window.location.href = position.link;
+            });
+
+            document.getElementById('zoomContainer').appendChild(button);
+        }
+
+        function adjustButtonPositions() {
+            const image = document.getElementById("zonaImage");
+            const containerRect = image.getBoundingClientRect();
+            const scaleX = containerRect.width / 100;
+            const scaleY = containerRect.height / 100;
+
+            document.querySelectorAll('.draggable-button').forEach(button => {
+                const leftPercent = button.dataset.leftPercent;
+                const topPercent = button.dataset.topPercent;
+                button.style.left = `${leftPercent * scaleX}px`;
+                button.style.top = `${topPercent * scaleY}px`;
+            });
+        }
+
+        function makeDraggable(element) {
+            let offsetX, offsetY;
+
+            element.addEventListener('mousedown', (event) => {
+                offsetX = event.clientX - element.getBoundingClientRect().left;
+                offsetY = event.clientY - element.getBoundingClientRect().top;
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+
+            function onMouseMove(event) {
+                const container = document.getElementById('zoomContainer');
+                const rect = container.getBoundingClientRect();
+                const x = event.clientX - rect.left - offsetX;
+                const y = event.clientY - rect.top - offsetY;
+
+                element.style.left = `${x}px`;
+                element.style.top = `${y}px`;
+            }
+
+            function onMouseUp() {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+
+                const container = document.getElementById('zoomContainer');
+                const rect = container.getBoundingClientRect();
+                const leftPercent = (parseInt(element.style.left) / rect.width) * 100;
+                const topPercent = (parseInt(element.style.top) / rect.height) * 100;
+
+                console.log({
+                    leftPercent: leftPercent.toFixed(2),
+                    topPercent: topPercent.toFixed(2),
+                    text: element.innerText,
+                    color: element.style.backgroundColor,
+                    link: element.link
+                });
+            }
+        }
+
+        function initializeButtons() {
+            initialButtonPositions.forEach(createButton);
+            adjustButtonPositions();
+        }
+
+        window.onload = function() {
+            initializeButtons();
+        };
+
+        window.addEventListener('resize', adjustButtonPositions);
+    </script>
+</body>
+</html>

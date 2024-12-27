@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Wilayah III</title>
+    <style>
+        body {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, sans-serif;
+            background: linear-gradient(to right, #f1edec, #5704f0);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 150vh;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 60px;
+            background-color: linear-gradient(to right, #f1edec, #5704f0);
+        }
+
+        .header-logo {
+            height: 90px; /* Sesuaikan tinggi logo */
+            width: auto;  /* Mempertahankan rasio aspek logo */
+        }
+
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 54px;
+            font-weight: bold;
+            margin: 0 20px; /* Memberikan jarak antara judul dan logo */
+            color: #f3f0f0;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Tambah overflow untuk menghindari scroll setelah zoom */
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .image-container {
+            position: relative;
+            transition: transform 0.3s ease; /* Animasi saat zoom */
+            transform-origin: center; /* Set origin zoom di tengah */
+        }
+
+        img {
+            max-width: 100%;
+            height: 800px;
+        }
+
+        .button-overlay {
+            position: absolute;
+            top: 37%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .button-overlay button {
+            padding: 4px 6px;
+            background-color: transparent;
+            color: darkblue;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5%;
+            cursor: pointer;
+            margin: 5px;
+            position: relative;
+            font-family: 'arial', sans-serif; /* Ganti font di sini */
+            transition: background-color 0.3s;
+        }
+
+        .button-overlay button:hover {
+            background-color: rgba(0, 0, 255, 0.5);
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="logo Perumda.png" alt="Logo Perumda" class="header-logo">
+        <div class="header-title">Dashboard Wilayah III</div>
+        <img src="Artboard 1.png" alt="Logo Artboard1" class="header-logo">
+    </header>
+
+    <main>
+        <div class="image-container" id="zoomContainer">
+            <img src="wilayah.png" alt="Dashboard Wilayah III">
+
+            <div class="button-overlay" id="buttonOverlay">
+                <button id="Cabang10Button" style="top: 90px; left: 150px;">Paseh</button>
+                <button id="Cabang11Button" style="top: 60px; left: 240px;">Tomo</button>
+                <button id="Cabang12Button" style="top: -45px; left: 140px;">Ujungjaya</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 IT Perumdam Tirta Medal Kabupaten Sumedang</p>
+    </footer>
+
+    <script>
+        function openPage(cabang) {
+            // Mapping cabang to specific URLs
+            let url;
+            switch (cabang) {
+                case 'Paseh':
+                    url = 'zona_bisnis_dash.html'; // Halaman khusus Paseh
+                    break;
+                case 'Tanjungsari':
+                case 'Pamulihan':
+                case 'Jatinangor':
+                case 'Cimanggung':
+                case 'Sumedang Utara':
+                case 'Sumedang Selatan':
+                case 'Cimalaka':
+                case 'Tanjungkerta':
+                case 'Tomo':
+                case 'Ujungjaya':
+                case 'Wado':
+                case 'Situraja':
+                case 'Cisitu':
+                case 'Darmaraja':
+                    url = 'under_construction.html'; // Halaman under construction
+                    break;
+                default:
+                    url = 'under_construction.html'; // Default jika cabang tidak ditemukan
+            }
+
+            // Redirect to the selected page
+            window.location.href = url;
+        }
+
+        const buttons = document.querySelectorAll('.button-overlay button');
+        buttons.forEach(button => {
+            const cabang = button.textContent;
+
+            // Klik untuk membuka halaman terkait cabang
+            button.addEventListener('click', () => openPage(cabang));
+
+            // Menambahkan fungsi drag
+            button.addEventListener('mousedown', function (event) {
+                event.preventDefault();
+                let shiftX = event.clientX - button.getBoundingClientRect().left;
+                let shiftY = event.clientY - button.getBoundingClientRect().top;
+
+                function moveAt(pageX, pageY) {
+                    button.style.left = pageX - shiftX + 'px';
+                    button.style.top = pageY - shiftY + 'px';
+                }
+
+                function onMouseMove(event) {
+                    moveAt(event.pageX, event.pageY);
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+
+                document.onmouseup = function () {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.onmouseup = null; // Menghapus fungsi mouseup
+                };
+            });
+
+            button.ondragstart = function () {
+                return false; // Mencegah drag default
+            };
+        });
+
+        // Zoom Functionality
+        let scale = 1;
+        const zoomContainer = document.getElementById('zoomContainer');
+        zoomContainer.addEventListener('wheel', function (event) {
+            event.preventDefault();
+            const zoomAmount = event.deltaY > 0 ? 0.9 : 1.1; // Zoom in or out
+            scale *= zoomAmount;
+            zoomContainer.style.transform = `scale(${scale})`; // Set zoom level
+            zoomContainer.style.transformOrigin = 'center'; // Set origin for scaling
+        });
+    </script>
+</body>
+
+</html>

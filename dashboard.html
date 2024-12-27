@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CABANG PASEH</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, sans-serif;
+            background: linear-gradient(to right, #f1edec, #599eec);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(to right, #75a6db, #00c6ff); /* Gradient background */
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 40px;
+        }
+
+        .header-logo {
+            height: 80px;
+            width: auto;
+        }
+
+        h1 {
+            flex-grow: 1;
+            text-align: center;
+            margin: 0;
+        }
+
+        .template-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .template-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px;
+            padding: 20px;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .template-item button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .template-item button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logo Perumda.png" alt="Logo Perumda" class="header-logo">
+        <h1>CABANG PASEH</h1>
+        <img src="Artboard 1.png" alt="Logo Artboard" class="header-logo">
+    </header>
+    <main>
+        <div class="template-list" id="templateList">
+            <!-- Template items will be injected here by JavaScript -->
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 IT PERUMDAM TIRTA MEDAL</p>
+    </footer>
+    <script>
+        const templates = [
+            { name: "Skematik Zona Bisnis Cabang Paseh", id: "ZonaBisnis" },
+            { name: "Dashboard Monitoring Cabang Paseh", id: "DashboardMonitoringCabangPaseh" },
+            { name: "Skematik Zona Produksi Cabang Paseh", id: "ZonaProduksi" },
+            { name: "GIS (Geographical Information System)", id: "GIS" },
+        ];
+
+        function displayTemplates() {
+            const templateList = document.getElementById('templateList');
+            templateList.innerHTML = ''; // Clear existing templates
+
+            templates.forEach(template => {
+                const templateItem = document.createElement('div');
+                templateItem.className = 'template-item';
+                templateItem.innerHTML = `<h3>${template.name}</h3><button onclick="openTemplate('${template.id}')">Lihat</button>`;
+                templateList.appendChild(templateItem);
+            });
+        }
+
+        function openTemplate(templateId) {
+            if (templateId === 'ZonaBisnis') {
+                window.location.href = 'zona_bisnis.html';
+            } else if (templateId === 'ZonaProduksi') {
+                window.location.href = 'ZonaProduksi.html';
+            } else if (templateId === 'DashboardMonitoringCabangPaseh') {
+                window.location.href = 'https://lookerstudio.google.com/embed/reporting/54537dd8-6ee8-4847-a1fa-4772a0864005/page/p_496xd6y5jd';
+            } else if (templateId === 'GIS') {
+                window.location.href = 'https://felt.com/map/Zona-Bisnis-Paseh-Uf9BCqhlQSZegG5R9CfguYhB?loc=-6.8017,108.01224,14.75z&share=1';
+            } else {
+                alert(`No page available for: ${templateId}`);
+            }
+        }
+
+        // Initial display of templates
+        displayTemplates();
+    </script>
+</body>
+</html>
