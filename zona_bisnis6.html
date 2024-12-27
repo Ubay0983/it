@@ -126,12 +126,21 @@
             
             <!-- Tooltip Box untuk data dari Google Sheets -->
             <div class="tooltip-box" id="tooltipBox">
-                <strong>Data Zona Bisnis 7:</strong><br>
+                <strong>Data DRD Zona Bisnis 7:</strong><br>
                 Jumlah SL: <span id="jumlahSL">-</span><br>
                 Jumlah m3: <span id="jumlahM3">-</span><br>
-                Pipa PVC: <span id="Pipa PVC">-</span><br>
-                Total Panjang Pipa : <span id="Total Panjang Pipa">-</span><br>
-
+                DRD bulan ini: <span id="drdBulanIni">-</span><br>
+                Jumlah m3 bulan lalu: <span id="jumlahM3BulanLalu">-</span><br>
+                DRD bulan lalu: <span id="drdBulanLalu">-</span><br>
+                Selisih m3: <span id="selisihM3">-</span><br>
+                Selisih Rp: <span id="selisihRp">-</span><br>
+                Pemakaian 0 m3: <span id="totalPemakaian0m3">-</span><br><br>
+                <strong>Data Golongan Tarif Zona Bisnis 7:</strong><br>
+                RT D: <span id="RTD">-</span> -- NK: <span id="NK">-</span><br>
+                RT C: <span id="RTC">-</span> -- NB: <span id="NB">-</span><br>
+                RT B: <span id="RTB">-</span> -- PEM: <span id="PEM">-</span><br>
+                RT A: <span id="RTA">-</span> -- KSP: <span id="KSP">-</span><br>
+                SK: <span id="SK">-</span> -- SU: <span id="SU">-</span><br>
             </div>
             
             <!-- Simple Tooltip untuk tombol -->
@@ -142,40 +151,85 @@
         <p>&copy; 2024 IT Perumdam Tirta Medal Kabupaten Sumedang</p>
     </footer>
     <script>
-        async function fetchGoogleSheetData() {
-            const url = 'https://docs.google.com/spreadsheets/d/12m7rdzKbmMvfDWLd6pKbnU1bjhxULJM7_azK2FFb4Og/gviz/tq?tqx=out:json&gid=1351844906';
-            try {
-                const response = await fetch(url);
-                const data = await response.text();
-                const json = JSON.parse(data.substr(47).slice(0, -2));
-                const rows = json.table.rows;
+async function fetchGoogleSheetData() {
+    const url = 'https://docs.google.com/spreadsheets/d/12m7rdzKbmMvfDWLd6pKbnU1bjhxULJM7_azK2FFb4Og/gviz/tq?tqx=out:json&gid=1351844906';
+    try {
+        const response = await fetch(url);
+        const data = await response.text();
+        const json = JSON.parse(data.substr(47).slice(0, -2));
+        const rows = json.table.rows;
 
-                let totalJumlahSL = 0, totalJumlahM3 = 0 ;
+        let totalJumlahSL = 0, totalJumlahM3 = 0, totalDRDBulanIni = 0, totalPemakaian0m3 = 0;
+        let totalJumlahM3BulanLalu = 0, totalDRDBulanLalu = 0;
+        let totalRTD = 0, totalRTC = 0, totalNK = 0, totalRTB = 0, totalNB = 0;
+        let totalRTA = 0, totalPEM = 0, totalSU = 0, totalKSP = 0, totalSK = 0;
 
-                rows.forEach(row => {
-                    if (row.c) {
-                        const zona = row.c[11] ? row.c[11].v : '';
-                        if (zona === 'Zona Bisnis 7') {
-                            totalJumlahSL += row.c[24] ? parseFloat(row.c[24].v) : 0;
-                            totalJumlahM3 += row.c[3] ? parseFloat(row.c[3].v) : 0;
+        rows.forEach(row => {
+            if (row.c) {
+                const zona = row.c[11] ? row.c[11].v : '';
+                const jumlahM3 = row.c[3] ? parseFloat(row.c[3].v) : 0;
 
-                        }
+                if (zona === 'Zona Bisnis 7') {
+                    totalJumlahSL += row.c[24] ? parseFloat(row.c[24].v) : 0;
+                    totalJumlahM3 += jumlahM3;
+                    totalDRDBulanIni += row.c[4] ? parseFloat(row.c[4].v) : 0;
+                    totalDRDBulanLalu += row.c[13] ? parseFloat(row.c[13].v) : 0;
+                    totalJumlahM3BulanLalu += row.c[12] ? parseFloat(row.c[12].v) : 0;
+                    totalRTD += row.c[14] ? parseFloat(row.c[14].v) : 0;
+                    totalRTC += row.c[15] ? parseFloat(row.c[15].v) : 0;
+                    totalNK += row.c[20] ? parseFloat(row.c[20].v) : 0;
+                    totalRTB += row.c[16] ? parseFloat(row.c[16].v) : 0;
+                    totalNB += row.c[17] ? parseFloat(row.c[17].v) : 0;
+                    totalRTA += row.c[18] ? parseFloat(row.c[18].v) : 0;
+                    totalPEM += row.c[19] ? parseFloat(row.c[19].v) : 0;
+                    totalSU += row.c[21] ? parseFloat(row.c[21].v) : 0;
+                    totalKSP += row.c[22] ? parseFloat(row.c[22].v) : 0;
+                    totalSK += row.c[23] ? parseFloat(row.c[23].v) : 0;
+
+                    if (jumlahM3 === 0) {
+                        totalPemakaian0m3 += 1;
                     }
-                });
+                }
+            }
+        });
 
-                document.getElementById("jumlahSL").innerText = totalJumlahSL.toLocaleString();
-                document.getElementById("jumlahM3").innerText = totalJumlahM3.toLocaleString();
-                document.getElementById("Pipa PVC").innerText = '3.279 Meter'.toLocaleString();
-                document.getElementById("Total Panjang Pipa").innerText = '3.279 Meter'.toLocaleString();
-                
+        // Update DOM
+        document.getElementById("jumlahSL").innerText = totalJumlahSL.toLocaleString('id-ID');
+        document.getElementById("jumlahM3").innerText = totalJumlahM3.toLocaleString('id-ID');
+        document.getElementById("drdBulanIni").innerText = totalDRDBulanIni.toLocaleString('id-ID');
+        document.getElementById("jumlahM3BulanLalu").innerText = totalJumlahM3BulanLalu.toLocaleString('id-ID');
+        document.getElementById("drdBulanLalu").innerText = totalDRDBulanLalu.toLocaleString('id-ID');
+        document.getElementById('totalPemakaian0m3').innerText = totalPemakaian0m3.toLocaleString('id-ID');
+        document.getElementById("RTD").innerText = totalRTD.toLocaleString('id-ID');
+        document.getElementById("NK").innerText = totalNK.toLocaleString('id-ID');
+        document.getElementById("RTC").innerText = totalRTC.toLocaleString('id-ID');
+        document.getElementById("RTB").innerText = totalRTB.toLocaleString('id-ID');
+        document.getElementById("NB").innerText = totalNB.toLocaleString('id-ID');
+        document.getElementById("RTA").innerText = totalRTA.toLocaleString('id-ID');
+        document.getElementById("PEM").innerText = totalPEM.toLocaleString('id-ID');
+        document.getElementById("KSP").innerText = totalKSP.toLocaleString('id-ID');
+        document.getElementById("SU").innerText = totalSU.toLocaleString('id-ID');
+        document.getElementById("SK").innerText = totalSK.toLocaleString('id-ID');
+        
+                // Calculate and display the differences with color indicators
+                const selisihM3 = totalJumlahM3 - totalJumlahM3BulanLalu;
+                const selisihRp = totalDRDBulanIni - totalDRDBulanLalu;
+
+                const selisihM3Span = document.getElementById('selisihM3');
+                selisihM3Span.innerText = formatNumber(selisihM3);
+                selisihM3Span.style.color = selisihM3 < 0 ? 'red' : 'green';
+
+                const selisihRpSpan = document.getElementById('selisihRp');
+                selisihRpSpan.innerText = formatNumber(selisihRp);
+                selisihRpSpan.style.color = selisihRp < 0 ? 'red' : 'green';
 
                 // Menampilkan tooltip saat gambar dihover
                 const tooltipBox = document.getElementById('tooltipBox');
                 tooltipBox.style.display = 'block';
 
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
         }
 
                // Helper function to format numbers with commas

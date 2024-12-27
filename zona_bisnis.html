@@ -137,6 +137,7 @@ header {
                 DRD bulan lalu: <span id="drdBulanLalu">-</span><br>
                 Selisih m3: <span id="selisihM3">-</span><br>
                 Selisih Rp: <span id="selisihRp.">-</span><br>
+                Pemakaian 0 m3: <span id="totalPemakaian0m3">-</span><br>
             </div>
         </div>
     </main>
@@ -163,6 +164,7 @@ header {
             let totalDRDBulanIni = 0;
             let totalJumlahM3BulanLalu = 0;
             let totalDRDBulanLalu = 0;
+            let totalPemakaian0m3 = 0;
 
             rows.forEach(row => {
                 if (row.c) {
@@ -179,6 +181,11 @@ header {
                         totalDRDBulanIni += drdBulanIni;
                         totalJumlahM3BulanLalu += jumlahM3BulanLalu;
                         totalDRDBulanLalu += drdBulanLalu;
+
+                        // Tambahkan jumlahM3 yang bernilai 0 ke totalPemakaian0m3
+                        if (jumlahM3 === 0) {
+                            totalPemakaian0m3 += 1; // Hitung jumlah pemakaian 0 m3
+                        }
                     }
                 }
             });
@@ -194,6 +201,7 @@ header {
             document.getElementById('drdBulanIni').textContent = totalDRDBulanIni.toLocaleString('id-ID');
             document.getElementById('jumlahM3BulanLalu').textContent = totalJumlahM3BulanLalu.toLocaleString('id-ID');
             document.getElementById('drdBulanLalu').textContent = totalDRDBulanLalu.toLocaleString('id-ID');
+            document.getElementById('totalPemakaian0m3').textContent = totalPemakaian0m3.toLocaleString('id-ID');
 
             // Menampilkan selisih dengan warna
             const selisihM3Element = document.getElementById('selisihM3');
@@ -208,6 +216,7 @@ header {
         })
         .catch(error => console.error('Error fetching data:', error));
 }
+
         function showTooltip(button, zona) {
             const rect = button.getBoundingClientRect();
             tooltipBox.style.top = rect.top + window.scrollY - tooltipBox.offsetHeight - 10 + 'px';
