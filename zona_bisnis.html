@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skematik Zona Bisnis Niaga Cabang Paseh</title>
+    <style>
+        body {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, sans-serif;
+            background: linear-gradient(to right, #f1edec, #5704f0);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 150vh;
+        }
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background-color: linear-gradient(to right, #f1edec, #5704f0);
+}
+
+.header-logo {
+    height: 90px; /* Sesuaikan tinggi logo */
+    width: auto;  /* Mempertahankan rasio aspek logo */
+}
+
+.header-title {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 54px;
+    font-weight: bold;
+    margin: 0 20px; /* Memberikan jarak antara judul dan logo */
+    color: #f3f0f0
+}
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Tambah overflow untuk menghindari scroll setelah zoom */
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .image-container {
+            position: relative;
+            transition: transform 0.3s ease; /* Animasi saat zoom */
+            transform-origin: center; /* Set origin zoom di tengah */
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .button-overlay {
+            position: absolute;
+            top: 37%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .button-overlay button {
+            padding: 15px 30px;
+            background-color: transparent;
+            color: black;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            position: relative;
+            font-family: 'cambria', sans-serif; /* Ganti font di sini */
+        }
+
+        .button-overlay button:hover {
+            background-color: white;
+        }
+
+        .tooltip {
+            display: none;
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 11px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: left;
+            font-size: 16px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="logo Perumda.png" alt="Logo Perumda" class="header-logo">
+        <div class="header-title">Skematik Zona Bisnis Niaga Cabang Paseh</div>
+        <img src="Artboard 1.png" alt="Logo Artboard1" class="header-logo">
+    </header>
+
+    <main>
+        <div class="image-container" id="zoomContainer">
+            <img src="PASEH1.png" alt="Skematik Zona Bisnis Niaga Cabang Paseh">
+
+            <div class="button-overlay" id="buttonOverlay">
+                <button id="zona2Button" style="top: 50px; left: 110px;">Zona Bisnis 2</button>
+                <button id="zona3Button" style="top: 10px; left: -250px;">Zona Bisnis 3</button>
+                <button id="zona4Button" style="top: 100px; left: -800px;">Zona Bisnis 4</button>
+                <button id="zona5Button" style="top: 120px; left: -550px;">Zona Bisnis 5</button>
+                <button id="zona6Button" style="top: 200px; left: -300px;">Zona Bisnis 6</button>
+                <button id="zona7Button" style="top: 50px; left: 400px;">Zona Bisnis 7</button>
+                <button id="zona8Button" style="top: 70px; left: 500px;">Zona Bisnis 8</button>
+                <button id="zona9Button" style="top: 200px; left: 370px;">Zona Bisnis 9</button>
+            </div>
+
+            <div class="tooltip" id="tooltipBox">
+                <strong id="tooltipTitle">Data Zona:</strong><br>
+                Jumlah SL: <span id="jumlahSL">-</span><br>
+                Jumlah m3: <span id="jumlahM3">-</span><br>
+                DRD bulan ini: <span id="drdBulanIni">-</span><br>
+                Jumlah m3 bulan lalu: <span id="jumlahM3BulanLalu">-</span><br>
+                DRD bulan lalu: <span id="drdBulanLalu">-</span><br>
+                Selisih m3: <span id="selisihM3">-</span><br>
+                Selisih Rp: <span id="selisihRp.">-</span><br>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 IT Perumdam Tirta Medal Kabupaten Sumedang</p>
+    </footer>
+
+    <script>
+        const tooltipBox = document.getElementById('tooltipBox');
+        const zoomContainer = document.getElementById('zoomContainer');
+
+        function fetchGoogleSheetData(zonaTarget) {
+    const url = 'https://docs.google.com/spreadsheets/d/12m7rdzKbmMvfDWLd6pKbnU1bjhxULJM7_azK2FFb4Og/gviz/tq?tqx=out:json&gid=1351844906';
+
+    fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            const json = JSON.parse(data.substr(47).slice(0, -2));
+            const rows = json.table.rows;
+
+            let totalJumlahSL = 0;
+            let totalJumlahM3 = 0;
+            let totalDRDBulanIni = 0;
+            let totalJumlahM3BulanLalu = 0;
+            let totalDRDBulanLalu = 0;
+
+            rows.forEach(row => {
+                if (row.c) {
+                    const zona = row.c[11] ? row.c[11].v : '';
+                    let jumlahSL = row.c[24] ? parseFloat(row.c[24].v) : 0;
+                    let jumlahM3 = row.c[3] ? parseFloat(row.c[3].v) : 0;
+                    let drdBulanIni = row.c[4] ? parseFloat(row.c[4].v) : 0;
+                    let jumlahM3BulanLalu = row.c[12] ? parseFloat(row.c[12].v) : 0;
+                    let drdBulanLalu = row.c[13] ? parseFloat(row.c[13].v) : 0;
+
+                    if (zona === zonaTarget) {
+                        totalJumlahSL += jumlahSL;
+                        totalJumlahM3 += jumlahM3;
+                        totalDRDBulanIni += drdBulanIni;
+                        totalJumlahM3BulanLalu += jumlahM3BulanLalu;
+                        totalDRDBulanLalu += drdBulanLalu;
+                    }
+                }
+            });
+
+            // Menghitung selisih
+            let selisihM3 = totalJumlahM3 - totalJumlahM3BulanLalu;
+            let selisihRp = totalDRDBulanIni - totalDRDBulanLalu;
+
+            // Update teks pada tooltip
+            document.getElementById('tooltipTitle').textContent = `Data ${zonaTarget}:`;
+            document.getElementById('jumlahSL').textContent = totalJumlahSL.toLocaleString('id-ID');
+            document.getElementById('jumlahM3').textContent = totalJumlahM3.toLocaleString('id-ID');
+            document.getElementById('drdBulanIni').textContent = totalDRDBulanIni.toLocaleString('id-ID');
+            document.getElementById('jumlahM3BulanLalu').textContent = totalJumlahM3BulanLalu.toLocaleString('id-ID');
+            document.getElementById('drdBulanLalu').textContent = totalDRDBulanLalu.toLocaleString('id-ID');
+
+            // Menampilkan selisih dengan warna
+            const selisihM3Element = document.getElementById('selisihM3');
+            const selisihRpElement = document.getElementById('selisihRp.');
+
+            selisihM3Element.textContent = selisihM3.toLocaleString('id-ID');
+            selisihRpElement.textContent = selisihRp.toLocaleString('id-ID');
+
+            // Mengubah warna teks berdasarkan hasil (positif/negatif)
+            selisihM3Element.style.color = selisihM3 >= 0 ? 'green' : 'red';
+            selisihRpElement.style.color = selisihRp >= 0 ? 'green' : 'red';
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+        function showTooltip(button, zona) {
+            const rect = button.getBoundingClientRect();
+            tooltipBox.style.top = rect.top + window.scrollY - tooltipBox.offsetHeight - 10 + 'px';
+            tooltipBox.style.left = rect.left + window.scrollX + (rect.width / 2) - (tooltipBox.offsetWidth / 2) + 'px';
+            tooltipBox.style.display = 'block';
+            fetchGoogleSheetData(zona);
+        }
+
+        function hideTooltip() {
+            tooltipBox.style.display = 'none';
+        }
+
+        function openPage(zona) {
+            let zonaNumber = parseInt(zona.replace('Zona Bisnis ', ''));
+            window.location.href = `zona_bisnis${zonaNumber - 1}.html`;
+        }
+
+        const buttons = document.querySelectorAll('.button-overlay button');
+        buttons.forEach(button => {
+            const zona = button.textContent;
+
+            button.addEventListener('mouseover', () => showTooltip(button, zona));
+            button.addEventListener('mouseout', hideTooltip);
+            button.addEventListener('click', () => openPage(zona));
+
+            // Menambahkan fungsi drag
+            button.addEventListener('mousedown', function (event) {
+                event.preventDefault();
+                let shiftX = event.clientX - button.getBoundingClientRect().left;
+                let shiftY = event.clientY - button.getBoundingClientRect().top;
+
+                function moveAt(pageX, pageY) {
+                    button.style.left = pageX - shiftX + 'px';
+                    button.style.top = pageY - shiftY + 'px';
+                }
+
+                function onMouseMove(event) {
+                    moveAt(event.pageX, event.pageY);
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+
+                document.onmouseup = function () {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.onmouseup = null; // Menghapus fungsi mouseup
+                };
+            });
+
+            button.ondragstart = function () {
+                return false; // Mencegah drag default
+            };
+        });
+
+        // Zoom Functionality
+        let scale = 1;
+        zoomContainer.addEventListener('wheel', function (event) {
+            event.preventDefault();
+            const zoomAmount = event.deltaY > 0 ? 0.9 : 1.1; // Zoom in or out
+            scale *= zoomAmount;
+            zoomContainer.style.transform = `scale(${scale})`; // Set zoom level
+            zoomContainer.style.transformOrigin = 'center'; // Set origin for scaling
+        });
+    </script>
+</body>
+
+</html>

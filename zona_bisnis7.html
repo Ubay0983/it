@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skematik Zona Bisnis 2 Cabang Paseh</title>
+    <title>Skematik Zona Bisnis Niaga 8 Cabang Paseh</title>
     <style>
         body {
             font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, sans-serif;
@@ -61,17 +61,49 @@
             transition: transform 0.3s ease;
         }
 
+        /* Tooltip Box untuk data Google Sheets */
+        .tooltip-box {
+            position: absolute;
+            top: -10px;
+            left: 80%;
+            transform: translateX(-50%);
+            display: block;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 11px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: left;
+            font-size: 16px;
+            z-index: 400;
+        }
+
+        /* Simple Tooltip untuk teks tombol */
+        .simple-tooltip {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 6px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 12px;
+            display: none;
+            z-index: 1003;
+            max-width: 200px;
+        }
+
         .draggable-button {
             position: absolute;
-            padding: 12px 20px;
-            border: 6px;
-            color: darkblue;
+            padding: 2px;
+            border: none;
+            color: white;
             cursor: pointer;
-            border-radius: 10%;
-            font-size: 22px;
-            min-width: 19px;
+            border-radius: 50%;
+            font-size: 6px;
+            min-width: 10px;
             z-index: 1001;
-            background-color:linear-gradient(to right, #6a11cb, #2575fc);
+            background-color: lightblue;
             transition: background-color 0.3s;
         }
 
@@ -85,40 +117,110 @@
 <body>
     <header>
         <img src="logo Perumda.png" alt="Logo Perumda" class="header-logo">
-        <div class="header-title">Dashboard Aspek Zona Bisnis Cabang Paseh</div>
+        <div class="header-title">Skematik Zona Bisnis Niaga 8 Cabang Paseh</div>
         <img src="Artboard 1.png" alt="Logo Artboard1" class="header-logo">
     </header>
     <main>
         <div class="image-container" id="zoomContainer">
-            <img src="PASEH.png" alt="Dashboard Aspek Zona Bisnis Cabang Paseh" id="zonaImage">
+            <img src="Zona 8.png" alt="Skematik Zona Bisnis Niaga 8 Cabang Paseh" id="zonaImage">
+            
+           <!-- Tooltip Box untuk data dari Google Sheets -->
+           <div class="tooltip-box" id="tooltipBox">
+            <strong>Data SDM Zona Bisnis 8:</strong><br>
+            Jumlah SL: <span id="jumlahSL">-</span><br>
+            DRD bulan ini: <span id="drdBulanIni">-</span><br>
+            Jumlah Pembaca Meter: <span id="jumlahBacaMeter">-</span><br>
+            Jumlah Penagih: <span id="jumlahPenagih">-</span><br>
+
         </div>
-    </main>
-    <footer>
-        <p>&copy; 2024 IT Perumdam Tirta Medal Kabupaten Sumedang</p>
-    </footer>
-    <script>
+        
+        <!-- Simple Tooltip untuk tombol -->
+        <div class="simple-tooltip" id="simpleTooltip"></div>
+    </div>
+</main>
+<footer>
+    <p>&copy; 2024 IT Perumdam Tirta Medal Kabupaten Sumedang</p>
+</footer>
+<script>
+    async function fetchGoogleSheetData() {
+        const url = 'https://docs.google.com/spreadsheets/d/12m7rdzKbmMvfDWLd6pKbnU1bjhxULJM7_azK2FFb4Og/gviz/tq?tqx=out:json&gid=1351844906';
+        try {
+            const response = await fetch(url);
+            const data = await response.text();
+            const json = JSON.parse(data.substr(47).slice(0, -2));
+            const rows = json.table.rows;
+
+            let totalJumlahSL = 0, totalDRDBulanIni = 0 ;
+
+            rows.forEach(row => {
+                if (row.c) {
+                    const zona = row.c[11] ? row.c[11].v : '';
+                    if (zona === 'Zona Bisnis 8') {
+                        totalJumlahSL += row.c[24] ? parseFloat(row.c[24].v) : 0;
+                        totalDRDBulanIni += row.c[4] ? parseFloat(row.c[4].v) : 0;
+
+                    }
+                }
+            });
+
+            document.getElementById("jumlahSL").innerText = totalJumlahSL.toLocaleString();
+            document.getElementById("drdBulanIni").innerText = totalDRDBulanIni.toLocaleString();
+            document.getElementById("jumlahBacaMeter").innerText = '1 Orang'.toLocaleString();
+            document.getElementById("jumlahPenagih").innerText = '1 Orang'.toLocaleString();
+
+                // Menampilkan tooltip saat gambar dihover
+                const tooltipBox = document.getElementById('tooltipBox');
+                tooltipBox.style.display = 'block';
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+               // Helper function to format numbers with commas
+               function formatNumber(num) {
+               return num.toLocaleString();
+        }
+
         const initialButtonPositions = [
-            {leftPercent: 58.15, topPercent: 6.18, text: 'ASPEK OPERASIONAL', link: 'AspekOperasional/dashboardPaseh.html'},
-            {leftPercent: 59.55, topPercent: 12.55, text: 'ASPEK KEUANGAN', link: 'AspekKeuangan/dashboardPaseh.html'},
-            {leftPercent: 59.75, topPercent: 18.82, text: 'ASPEK PELAYANAN', link: 'AspekPelayanan/dashboardPaseh.html'},
-            {leftPercent: 79.59, topPercent: 6.18, text: 'ASPEK SDM', link: 'page4.html'},
-            {leftPercent: 79.13, topPercent: 12.64, text: 'ASPEK HUKUM', link: 'page5.html'},
-            {leftPercent: 76.87, topPercent: 18.91, text: 'ASPEK PENGAWASAN', link: 'page6.html'},
-        ];
+        {leftPercent :72.50, topPercent:49.87,text :'P01',color : 'Green',tooltip :'Jenis Pipa PVC 2" ; Pipa Distribusi Pelayanan ; Lokasi Warung Buah; 1450,2 meter ; Perpompaan ; -'},
+        {leftPercent :40.89, topPercent:41.98,text :'P02',color : 'brown',tooltip :'Jenis Pipa HDPE40 mm ; Pipa Dinas ; Lokasi Sidaraja ; 66,7 meter; Perpompaan ; -'},
+        {leftPercent :40.89, topPercent:39.04,text :'SK01',color : 'black',tooltip :' Lokasi Nyalindung ; -'},
+        {leftPercent :53.33, topPercent:40.47,text :'M02',color : 'black',tooltip :' Lokasi Nyalindung ; -'},
+
+        ]
+
+        function showSimpleTooltip(text, x, y) {
+            const tooltip = document.getElementById('simpleTooltip');
+            tooltip.innerText = text;
+            tooltip.style.display = 'block';
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y - 20}px`;
+        }
+
+        function hideSimpleTooltip() {
+            const tooltip = document.getElementById('simpleTooltip');
+            tooltip.style.display = 'none';
+        }
 
         function createButton(position) {
             const button = document.createElement('button');
             button.innerText = position.text;
             button.className = 'draggable-button';
             button.style.backgroundColor = position.color;
+            button.dataset.tooltip = position.tooltip;
+
             button.dataset.leftPercent = position.leftPercent;
             button.dataset.topPercent = position.topPercent;
 
             makeDraggable(button);
 
-            button.addEventListener('click', () => {
-                window.location.href = position.link;
+            button.addEventListener('click', (event) => {
+                const tooltipText = button.dataset.tooltip;
+                showSimpleTooltip(tooltipText, event.clientX, event.clientY);
             });
+
+            button.addEventListener('mouseleave', hideSimpleTooltip);
 
             document.getElementById('zoomContainer').appendChild(button);
         }
@@ -172,7 +274,7 @@
                     topPercent: topPercent.toFixed(2),
                     text: element.innerText,
                     color: element.style.backgroundColor,
-                    link: element.link
+                    tooltip: element.dataset.tooltip
                 });
             }
         }
@@ -183,6 +285,7 @@
         }
 
         window.onload = function() {
+            fetchGoogleSheetData();
             initializeButtons();
         };
 

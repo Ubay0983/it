@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skematik Zona Bisnis Niaga 2 Cabang Paseh</title>
+    <style>
+        body {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, sans-serif;
+            background: linear-gradient(to right, #f1edec, #5704f0);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 60px;
+        }
+
+        .header-logo {
+            height: 90px;
+            width: auto;
+        }
+
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 54px;
+            font-weight: bold;
+            margin: 0 20px;
+            color: #f3f0f0;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        /* Tooltip Box untuk data Google Sheets */
+        .tooltip-box {
+            position: absolute;
+            top: -10px;
+            left: 90%;
+            transform: translateX(-50%);
+            display: block;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 11px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: left;
+            font-size: 16px;
+            z-index: 400;
+        }
+
+        /* Simple Tooltip untuk teks tombol */
+        .simple-tooltip {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 6px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 12px;
+            display: none;
+            z-index: 1003;
+            max-width: 200px;
+        }
+
+        .draggable-button {
+            position: absolute;
+            padding: 2px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 6px;
+            min-width: 10px;
+            z-index: 1001;
+            background-color: lightblue;
+            transition: background-color 0.3s;
+        }
+
+        .draggable-button:hover {
+            background-color: rgba(0, 0, 255, 0.5);
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="logo Perumda.png" alt="Logo Perumda" class="header-logo">
+        <div class="header-title">Skematik Zona Bisnis Niaga 2 Cabang Paseh</div>
+        <img src="Artboard 1.png" alt="Logo Artboard1" class="header-logo">
+    </header>
+    <main>
+        <div class="image-container" id="zoomContainer">
+            <img src="Zona 2.png" alt="Skematik Zona Bisnis Niaga 2 Cabang Paseh" id="zonaImage">
+            
+            <!-- Tooltip Box untuk data dari Google Sheets -->
+            <div class="tooltip-box" id="tooltipBox">
+                <strong>Data SDM Zona Bisnis 2:</strong><br>
+                Jumlah SL: <span id="jumlahSL">-</span><br>
+                DRD bulan ini: <span id="drdBulanIni">-</span><br>
+                Jumlah Pembaca Meter: <span id="jumlahBacaMeter">-</span><br>
+                Jumlah Penagih: <span id="jumlahPenagih">-</span><br>
+
+            </div>
+            
+            <!-- Simple Tooltip untuk tombol -->
+            <div class="simple-tooltip" id="simpleTooltip"></div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 IT Perumdam Tirta Medal Kabupaten Sumedang</p>
+    </footer>
+    <script>
+        async function fetchGoogleSheetData() {
+            const url = 'https://docs.google.com/spreadsheets/d/12m7rdzKbmMvfDWLd6pKbnU1bjhxULJM7_azK2FFb4Og/gviz/tq?tqx=out:json&gid=1351844906';
+            try {
+                const response = await fetch(url);
+                const data = await response.text();
+                const json = JSON.parse(data.substr(47).slice(0, -2));
+                const rows = json.table.rows;
+
+                let totalJumlahSL = 0, totalDRDBulanIni = 0 ;
+
+                rows.forEach(row => {
+                    if (row.c) {
+                        const zona = row.c[11] ? row.c[11].v : '';
+                        if (zona === 'Zona Bisnis 2') {
+                            totalJumlahSL += row.c[24] ? parseFloat(row.c[24].v) : 0;
+                            totalDRDBulanIni += row.c[4] ? parseFloat(row.c[4].v) : 0;
+
+                        }
+                    }
+                });
+
+                document.getElementById("jumlahSL").innerText = totalJumlahSL.toLocaleString();
+                document.getElementById("drdBulanIni").innerText = totalDRDBulanIni.toLocaleString();
+                document.getElementById("jumlahBacaMeter").innerText = '5 Orang'.toLocaleString();
+                document.getElementById("jumlahPenagih").innerText = '7 Orang'.toLocaleString();
+
+
+                // Menampilkan tooltip saat gambar dihover
+                const tooltipBox = document.getElementById('tooltipBox');
+                tooltipBox.style.display = 'block';
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+               // Helper function to format numbers with commas
+               function formatNumber(num) {
+               return num.toLocaleString();
+        }
+
+        const initialButtonPositions = [
+        {leftPercent :51.51,topPercent :45.2,text :'P01',color : 'lightblue',tooltip :'Jenis Pipa HDPE90 mm; Pipa Distribusi Pelayanan ; Lokasi Parumasan; 647,849 meter; Perpompaan; -'},
+        {leftPercent :44.88,topPercent :26.95,text :'P02',color : 'lightblue',tooltip :'Jenis Pipa PVC90 mm; Pipa Distribusi Pelayanan ; Lokasi Paledang; 794,832 meter; Perpompaan; -'},
+        {leftPercent :41.84,topPercent :18.42,text :'P03',color : 'yellow',tooltip :'Jenis Pipa PVC63 mm; Pipa Distribusi Pelayanan ; Lokasi Nagrak; 245,792 meter; Perpompaan; -'},
+        {leftPercent :76.65,topPercent :48.81,text :'P04',color : 'lightblue',tooltip :'Jenis Pipa PVC90 mm; Pipa Distribusi Pelayanan ; Lokasi Parumasan - Jembatan depan kantor cabang;748,503 meter; Perpompaan; -'},
+        {leftPercent :38.97,topPercent :21.04,text :'P05',color : 'lightblue',tooltip :'Jenis Pipa PVC90 mm; Pipa Distribusi Pelayanan ; Lokasi Jl Nagrak; 834,844 meter; Perpompaan; -'},
+        {leftPercent :56.02,topPercent :57.89,text :'P06',color : 'orange',tooltip :'Jenis Pipa PVC75 mm; Pipa Distribusi Pelayanan ; Lokasi Sukamulya; 192,003 meter; Perpompaan; -'},
+        {leftPercent :54.64,topPercent :59.99,text :'P07',color : 'brown',tooltip :'Jenis Pipa HDPE50 mm; Pipa Distribusi Pelayanan ; Lokasi SMP Paseh 1; 130,951 meter; Perpompaan; -'},
+        {leftPercent :73.51,topPercent :48.63,text :'P08',color : 'yellow',tooltip :'Jenis Pipa HDPE50 mm; Pipa Distribusi Pelayanan ; Lokasi Cilegok; 317,869 meter; Perpompaan; -'},
+        {leftPercent :55.06,topPercent :74.74,text :'P09',color : 'yellow',tooltip :'Jenis Pipa HDPE50 mm; Pipa Dinas ; Lokasi Sukamulya,paguyangan salak,Cicambe; 907,717 meter; Perpompaan; -'},
+        {leftPercent :45.74,topPercent :52.39,text :'P10',color : 'green',tooltip :'Jenis Pipa HDPE50 mm; Pipa Dinas ; Lokasi Jl Pemuda; 240,254 meter; Perpompaan; -'},
+        {leftPercent :73.40,topPercent :52.21,text :'P11',color : 'yellow',tooltip :'Jenis Pipa HDPE40 mm; Pipa Dinas ; Lokasi Cilegok Pasir; 256,081 meter; Perpompaan; -'},
+        {leftPercent :37.05,topPercent :26.89,text :'P12',color : 'yellow',tooltip :'Jenis Pipa HDPE50 mm; Pipa Dinas ; Lokasi Jl. Sukahayu; 724,622 meter; Perpompaan; -'},
+        {leftPercent :39.71,topPercent :32.66,text :'P13',color : 'yellow',tooltip :'Jenis Pipa HDPE50 mm; Pipa Dinas ; Lokasi Jl, sukahayu-nagrak; 148,533 meter; Perpompaan; -'},
+        {leftPercent :52.08,topPercent :53.70,text :'P14',color : 'orange',tooltip :'Jenis Pipa PVC75 mm; Pipa Distribusi Pelayanan ; Lokasi Jl. Pemuda; 722,668 meter; Perpompaan; -'},
+        {leftPercent :58.58,topPercent :49.16,text :'P15',color : 'orange',tooltip :'Jenis Pipa PVC75 mm; Pipa Distribusi Pelayanan ; Lokasi Jl Propinsi; 73,2158 meter; Perpompaan; -'},
+        {leftPercent :36.03,topPercent :16.07,text :'P16',color : 'blue',tooltip :'Jenis Pipa PVC200 mm; Pipa Distribusi Utama ; Lokasi Jl. PUK; 383,887 meter; Perpompaan; -'},
+        {leftPercent :41.42,topPercent :14.93,text :'P17',color : 'pink',tooltip :'Jenis Pipa PVC160 mm; Pipa Distribusi Utama ; Lokasi parumasan-nagrak; 86,8611 meter; Perpompaan; -'},
+        {leftPercent :44.08,topPercent :48.46,text :'P18',color : 'green',tooltip :'Jenis Pipa HDPE50 mm; Pipa Dinas ; Lokasi Jl. Propinsi; 105,831 meter; Perpompaan; -'},
+        {leftPercent :71.70,topPercent :49.86,text :'P19',color : 'lightblue',tooltip :'Jenis Pipa GALVANIS90 mm; Pipa Jembatan ; Lokasi Paseh; 18,3412 meter; Perpompaan; 1992'},
+        {leftPercent :75.59,topPercent :50.73,text :'P20',color : 'lightblue',tooltip :'Jenis Pipa PVC90 mm; Pipa Distribusi Pelayanan ; Lokasi Jembatan depan kantor cabang - BPT PI; 969,277 meter; Perpompaan; 1992'},
+        {leftPercent :54.74, topPercent:48.28,text :'B1',color : 'Black',tooltip :'Bend PVC dia.90 mm Lokasi Paseh ; Pipa Distribusi Pelayanan ; Tahun-; Koordinat -6.7982988,108.2471;'},
+        {leftPercent :46.27, topPercent:47.85,text :'B2',color : 'Black',tooltip :'Bend PVC dia.75 mm Lokasi Jl Pemuda; Pipa Distribusi Pelayanan ; Tahun-; Koordinat -6.7979647,108.9307;'},
+        {leftPercent :54.85, topPercent:49.68,text :'D3',color : 'Black',tooltip :'Dop dia.75 mm Lokasi Sukamulya; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7971704,108.31848;'},
+        {leftPercent :39.93, topPercent:46.28,text :'D4',color : 'Black',tooltip :'Dop dia.50 mm Lokasi Sukahayu; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7986298,107.9992209;'},
+        {leftPercent :59.33, topPercent:80.68,text :'D5',color : 'Black',tooltip :'Dop dia.50 mm Lokasi  Pangguyangan salak; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.8052486,108.78009;'},
+        {leftPercent :51.60, topPercent:60.16,text :'D6',color : 'Black',tooltip :'Dop dia.50 mm Lokasi Jl SMP; (Pipa Distribusi); Tahun-; Koordinat -6.7999178,108.22317;'},
+        {leftPercent :73.61, topPercent:47.59,text :'D7',color : 'Black',tooltip :'Dop dia.90 mm Lokasi Cilegok; Pipa Distribusi Pelayanan; Tahun 1991; Koordinat -6.7920232,108.126071;'},
+        {leftPercent :29.26, topPercent:10.48,text :'D8',color : 'Black',tooltip :'Dop dia.63 mm Lokasi Sukajadi; (Pipa Distribusi); Tahun-; Koordinat -6.7952912,107.9931223;'},
+        {leftPercent :44.03, topPercent:18.25,text :'GV9',color : 'Black',tooltip :'Gate Valve dia.90 mm Lokasi Pertigaan Paledang; Pipa Distribusi Pelayanan; Tahun 2023; Koordinat-6.7918969,107.9974175;'},
+        {leftPercent :47.01, topPercent:38.94,text :'GV10',color : 'Black',tooltip :'Gate Valve dia.90 mm Lokasi Pertigaan Parumasan; (Distribusi); Tahun 2019; Koordinat -6.7942578,108.40575;'},
+        {leftPercent :38.59, topPercent:18.95,text :'GV11',color : 'Black',tooltip :'Gate Valve dia.90 mm Lokasi Nagrak dekat Alpa; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7981804,108.1784;'},
+        {leftPercent :57.25, topPercent:61.56,text :'GV12',color : 'Black',tooltip :'Gate Valve dia.90 mm Lokasi valve SMP; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7998673,108.32272;'},
+        {leftPercent :53.30, topPercent:73.52,text :'GV13',color : 'Black',tooltip :'Gate Valve dia.50 mm LokasiPaguyangan salak; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.8039087,108.27796;'},
+        {leftPercent :44.94,topPercent :26.101,text :'GV14',color : 'Black',tooltip :'Gate Valve dia.90 mm Lokasi Nagrak; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7929283,107.9965477;'},
+        {leftPercent :51.58,topPercent :45.9,text :'GV15',color : 'Black',tooltip :'Gate Valve dia.50 mm Lokasi Jl. Sukananjung; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7946565,107.9951214;'},
+        {leftPercent :77.77, topPercent:46.54,text :'GV16',color : 'Black',tooltip :'Gate Valve dia.90 mm Lokasi PI; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7928518,108.140226;'},
+        {leftPercent :33.90, topPercent:17.29,text :'GV17',color : 'Black',tooltip :'Gate Valve dia.200 mm Lokasi Nagrak; Pipa Distribusi Utama; Tahun-; Koordinat -6.7924227,107.9969509;'},
+        {leftPercent :44.96,topPercent :26.103,text :'GV18',color : 'Black',tooltip :'Gate Valve dia.160 mm LokasiNagrak;Pipa Transmisi;Tahun-;Koordinat-6.7918445,107.9974349;'},
+        {leftPercent :51.60,topPercent :45.11,text :'GV19',color : 'Black',tooltip :'Gate Valve dia.200 mm LokasiJL PUK;-; Tahun-; Koordinat-6.7952520,107.9946392;'},
+        {leftPercent :43.12, topPercent:15.19,text :'T20',color : 'Black',tooltip :'Tee dia.160 mm x 90 mm Lokasi Nagrak; Pipa Distribusi Utama; Tahun-; Koordinat -6.7918835,107.9973929;'},
+        {leftPercent :48.29, topPercent:40.34,text :'T21',color : 'Black',tooltip :'Tee dia.75 mm Lokasi Parumasan;Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7989022,108.32685;'},
+        {leftPercent :55.33, topPercent:55.88,text :'T22',color : 'Black',tooltip :'Tee dia.200 mm x 90 mm LokasiNagrak;Pipa Distribusi Utama;Tahun-;Koordinat -6.7929176,107.9965352;'},
+        {leftPercent :35.13, topPercent:16.94,text :'T23',color : 'Black',tooltip :'Tee dia.200 mm X 63 mm Lokasi Sukananjung; Pipa Distribusi Utama; Tahun-; Koordinat -6.7946440,107.9951021;'},
+        {leftPercent :41.47, topPercent:31.08,text :'T24',color : 'Black',tooltip :'Tee dia.62 mm X 32 mm Lokasi Nangrak; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7972154,108.1460;'},
+        {leftPercent :38.59, topPercent:34.23,text :'T25',color : 'Black',tooltip :'Teedia.50 mm Lokasi Sukahayu;Pipa Distribusi Pelayanan;Tahun-; Koordinat -6.7977132,107.9992450;'},
+        {leftPercent :47.07, topPercent:41.39,text :'T26',color : 'Black',tooltip :'Teedia.90 mm Lokasi Parumasan; (Pipa Distribusi);Tahun 1991; Koordinat -6.7942642,108.40714;'},
+        {leftPercent :57.04, topPercent:64.35,text :'T27',color : 'Black',tooltip :'Teedia.75 mm Lokasi Sukamulya; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7998015,108.32028;'},
+        {leftPercent :50.27, topPercent:52.21,text :'T28',color : 'Black',tooltip :'Tee dia.75 mm Lokasi Jl Pemuda; Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7981823,108.11472;'},
+        {leftPercent :34.43, topPercent: 15.89,text :'T29',color : 'Black',tooltip :'Tee dia.200 mm X 63 mm Lokasi Jl PUK ke Sukajadi; Pipa Distribusi Pelayanan;Tahun-;Koordinat -6.7951003,107.9947516;'},
+        {leftPercent :73.56, topPercent:50.47,text :'T30',color : 'Black',tooltip :'Tee Y RRJdia.90 mm Lokasi Cilegek;Pipa Distribusi Pelayanan; Tahun-; Koordinat -6.7943745,108.111452;'},
+        {leftPercent :58.21, topPercent: 68.54,text :'VS31',color : 'Black',tooltip :'Vlock Shock dia.75 mm Lokasi Pangguyangan salak;Pipa Distribusi Pelayanan;Tahun-; Koordinat -6.8016951,108.43762;'},
+        {leftPercent :38.01, topPercent:14.76,text :'VS32',color : 'Black',tooltip :'Vlock Shock dia.200 mm X 160 mm Lokasi Nagrak; Pipa Distribusi Utama; Tahun 1991; Koordinat -6.7924465,107.9969316;'},
+
+        ]
+
+        function showSimpleTooltip(text, x, y) {
+            const tooltip = document.getElementById('simpleTooltip');
+            tooltip.innerText = text;
+            tooltip.style.display = 'block';
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y - 20}px`;
+        }
+
+        function hideSimpleTooltip() {
+            const tooltip = document.getElementById('simpleTooltip');
+            tooltip.style.display = 'none';
+        }
+
+        function createButton(position) {
+            const button = document.createElement('button');
+            button.innerText = position.text;
+            button.className = 'draggable-button';
+            button.style.backgroundColor = position.color;
+            button.dataset.tooltip = position.tooltip;
+
+            button.dataset.leftPercent = position.leftPercent;
+            button.dataset.topPercent = position.topPercent;
+
+            makeDraggable(button);
+
+            button.addEventListener('click', (event) => {
+                const tooltipText = button.dataset.tooltip;
+                showSimpleTooltip(tooltipText, event.clientX, event.clientY);
+            });
+
+            button.addEventListener('mouseleave', hideSimpleTooltip);
+
+            document.getElementById('zoomContainer').appendChild(button);
+        }
+
+        function adjustButtonPositions() {
+            const image = document.getElementById("zonaImage");
+            const containerRect = image.getBoundingClientRect();
+            const scaleX = containerRect.width / 100;
+            const scaleY = containerRect.height / 100;
+
+            document.querySelectorAll('.draggable-button').forEach(button => {
+                const leftPercent = button.dataset.leftPercent;
+                const topPercent = button.dataset.topPercent;
+                button.style.left = `${leftPercent * scaleX}px`;
+                button.style.top = `${topPercent * scaleY}px`;
+            });
+        }
+
+        function makeDraggable(element) {
+            let offsetX, offsetY;
+
+            element.addEventListener('mousedown', (event) => {
+                offsetX = event.clientX - element.getBoundingClientRect().left;
+                offsetY = event.clientY - element.getBoundingClientRect().top;
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+
+            function onMouseMove(event) {
+                const container = document.getElementById('zoomContainer');
+                const rect = container.getBoundingClientRect();
+                const x = event.clientX - rect.left - offsetX;
+                const y = event.clientY - rect.top - offsetY;
+
+                element.style.left = `${x}px`;
+                element.style.top = `${y}px`;
+            }
+
+            function onMouseUp() {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+
+                const container = document.getElementById('zoomContainer');
+                const rect = container.getBoundingClientRect();
+                const leftPercent = (parseInt(element.style.left) / rect.width) * 100;
+                const topPercent = (parseInt(element.style.top) / rect.height) * 100;
+
+                console.log({
+                    leftPercent: leftPercent.toFixed(2),
+                    topPercent: topPercent.toFixed(2),
+                    text: element.innerText,
+                    color: element.style.backgroundColor,
+                    tooltip: element.dataset.tooltip
+                });
+            }
+        }
+
+        function initializeButtons() {
+            initialButtonPositions.forEach(createButton);
+            adjustButtonPositions();
+        }
+
+        window.onload = function() {
+            fetchGoogleSheetData();
+            initializeButtons();
+        };
+
+        window.addEventListener('resize', adjustButtonPositions);
+    </script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skematik Zona Bisnis Niaga 6 Cabang Paseh</title>
+    <style>
+        body {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, sans-serif;
+            background: linear-gradient(to right, #f1edec, #5704f0);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 60px;
+        }
+
+        .header-logo {
+            height: 90px;
+            width: auto;
+        }
+
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 54px;
+            font-weight: bold;
+            margin: 0 20px;
+            color: #f3f0f0;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        /* Tooltip Box untuk data Google Sheets */
+        .tooltip-box {
+            position: absolute;
+            top: -10px;
+            left: 20%;
+            transform: translateX(-50%);
+            display: block;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 11px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: left;
+            font-size: 16px;
+            z-index: 400;
+        }
+
+        /* Simple Tooltip untuk teks tombol */
+        .simple-tooltip {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 6px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 12px;
+            display: none;
+            z-index: 1003;
+            max-width: 200px;
+        }
+
+        .draggable-button {
+            position: absolute;
+            padding: 2px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 6px;
+            min-width: 10px;
+            z-index: 1001;
+            background-color: lightblue;
+            transition: background-color 0.3s;
+        }
+
+        .draggable-button:hover {
+            background-color: rgba(0, 0, 255, 0.5);
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="logo Perumda.png" alt="Logo Perumda" class="header-logo">
+        <div class="header-title">Skematik Zona Bisnis Niaga 6 Cabang Paseh</div>
+        <img src="Artboard 1.png" alt="Logo Artboard1" class="header-logo">
+    </header>
+    <main>
+        <div class="image-container" id="zoomContainer">
+            <img src="Zona 6.png" alt="Skematik Zona Bisnis Niaga 6 Cabang Paseh" id="zonaImage">
+            
+           <!-- Tooltip Box untuk data dari Google Sheets -->
+           <div class="tooltip-box" id="tooltipBox">
+            <strong>Data SDM Zona Bisnis 6:</strong><br>
+            Jumlah SL: <span id="jumlahSL">-</span><br>
+            DRD bulan ini: <span id="drdBulanIni">-</span><br>
+            Jumlah Pembaca Meter: <span id="jumlahBacaMeter">-</span><br>
+            Jumlah Penagih: <span id="jumlahPenagih">-</span><br>
+
+        </div>
+        
+        <!-- Simple Tooltip untuk tombol -->
+        <div class="simple-tooltip" id="simpleTooltip"></div>
+    </div>
+</main>
+<footer>
+    <p>&copy; 2024 IT Perumdam Tirta Medal Kabupaten Sumedang</p>
+</footer>
+<script>
+    async function fetchGoogleSheetData() {
+        const url = 'https://docs.google.com/spreadsheets/d/12m7rdzKbmMvfDWLd6pKbnU1bjhxULJM7_azK2FFb4Og/gviz/tq?tqx=out:json&gid=1351844906';
+        try {
+            const response = await fetch(url);
+            const data = await response.text();
+            const json = JSON.parse(data.substr(47).slice(0, -2));
+            const rows = json.table.rows;
+
+            let totalJumlahSL = 0, totalDRDBulanIni = 0 ;
+
+            rows.forEach(row => {
+                if (row.c) {
+                    const zona = row.c[11] ? row.c[11].v : '';
+                    if (zona === 'Zona Bisnis 6') {
+                        totalJumlahSL += row.c[24] ? parseFloat(row.c[24].v) : 0;
+                        totalDRDBulanIni += row.c[4] ? parseFloat(row.c[4].v) : 0;
+
+                    }
+                }
+            });
+
+            document.getElementById("jumlahSL").innerText = totalJumlahSL.toLocaleString();
+            document.getElementById("drdBulanIni").innerText = totalDRDBulanIni.toLocaleString();
+            document.getElementById("jumlahBacaMeter").innerText = '1 Orang'.toLocaleString();
+            document.getElementById("jumlahPenagih").innerText = '2 Orang'.toLocaleString();
+
+
+                // Menampilkan tooltip saat gambar dihover
+                const tooltipBox = document.getElementById('tooltipBox');
+                tooltipBox.style.display = 'block';
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+               // Helper function to format numbers with commas
+               function formatNumber(num) {
+               return num.toLocaleString();
+        }
+
+        const initialButtonPositions = [
+        {leftPercent :63.27, topPercent:58.10,text :'P01',color : 'lightblue',tooltip :'Jenis Pipa PVC 3" ; Pipa Distribusi Pelayanan ; Lokasi Haurkuning ; 708,176 meter; Perpompaan ; -'},
+        {leftPercent :55.71, topPercent:44.50,text :'P02',color : 'yellow',tooltip :'Jenis Pipa HDPE50 mm ; Pipa Distribusi Pelayanan ; Lokasi Haurkuning ; 874 meter; Perpompaan ; -'},
+        {leftPercent :78.21, topPercent:38.54,text :'P03',color : 'brown',tooltip :'Jenis Pipa HDPE40 mm ; Pipa Distribusi Pelayanan ; Lokasi Bah Dia ; 370 meter ; Perpompaan ; -'},
+        {leftPercent :76.61, topPercent:45.00,text :'P04',color : 'yellow',tooltip :'Jenis Pipa HDPE40 mm ; Pipa Distribusi Pelayanan ; Lokasi Jelegong ; 182,9 meter; Perpompaan ; -'},
+        {leftPercent :68.81, topPercent:53.06,text :'P05',color : 'yellow',tooltip :'Jenis Pipa HDPE50 mm ; Pipa Distribusi Pelayanan ; Lokasi Jelegong2 ; 257,76 meter; Perpompaan ; -'},
+        {leftPercent :49.70, topPercent:40.81,text :'P06',color : 'Brown',tooltip :'Jenis Pipa HDPE25 mm ; Pipa Distribusi Pelayanan ; Lokasi Jelegong; 93 meter ; Perpompaan ;  1991 '},
+
+        ]
+
+        function showSimpleTooltip(text, x, y) {
+            const tooltip = document.getElementById('simpleTooltip');
+            tooltip.innerText = text;
+            tooltip.style.display = 'block';
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y - 20}px`;
+        }
+
+        function hideSimpleTooltip() {
+            const tooltip = document.getElementById('simpleTooltip');
+            tooltip.style.display = 'none';
+        }
+
+        function createButton(position) {
+            const button = document.createElement('button');
+            button.innerText = position.text;
+            button.className = 'draggable-button';
+            button.style.backgroundColor = position.color;
+            button.dataset.tooltip = position.tooltip;
+
+            button.dataset.leftPercent = position.leftPercent;
+            button.dataset.topPercent = position.topPercent;
+
+            makeDraggable(button);
+
+            button.addEventListener('click', (event) => {
+                const tooltipText = button.dataset.tooltip;
+                showSimpleTooltip(tooltipText, event.clientX, event.clientY);
+            });
+
+            button.addEventListener('mouseleave', hideSimpleTooltip);
+
+            document.getElementById('zoomContainer').appendChild(button);
+        }
+
+        function adjustButtonPositions() {
+            const image = document.getElementById("zonaImage");
+            const containerRect = image.getBoundingClientRect();
+            const scaleX = containerRect.width / 100;
+            const scaleY = containerRect.height / 100;
+
+            document.querySelectorAll('.draggable-button').forEach(button => {
+                const leftPercent = button.dataset.leftPercent;
+                const topPercent = button.dataset.topPercent;
+                button.style.left = `${leftPercent * scaleX}px`;
+                button.style.top = `${topPercent * scaleY}px`;
+            });
+        }
+
+        function makeDraggable(element) {
+            let offsetX, offsetY;
+
+            element.addEventListener('mousedown', (event) => {
+                offsetX = event.clientX - element.getBoundingClientRect().left;
+                offsetY = event.clientY - element.getBoundingClientRect().top;
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+
+            function onMouseMove(event) {
+                const container = document.getElementById('zoomContainer');
+                const rect = container.getBoundingClientRect();
+                const x = event.clientX - rect.left - offsetX;
+                const y = event.clientY - rect.top - offsetY;
+
+                element.style.left = `${x}px`;
+                element.style.top = `${y}px`;
+            }
+
+            function onMouseUp() {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+
+                const container = document.getElementById('zoomContainer');
+                const rect = container.getBoundingClientRect();
+                const leftPercent = (parseInt(element.style.left) / rect.width) * 100;
+                const topPercent = (parseInt(element.style.top) / rect.height) * 100;
+
+                console.log({
+                    leftPercent: leftPercent.toFixed(2),
+                    topPercent: topPercent.toFixed(2),
+                    text: element.innerText,
+                    color: element.style.backgroundColor,
+                    tooltip: element.dataset.tooltip
+                });
+            }
+        }
+
+        function initializeButtons() {
+            initialButtonPositions.forEach(createButton);
+            adjustButtonPositions();
+        }
+
+        window.onload = function() {
+            fetchGoogleSheetData();
+            initializeButtons();
+        };
+
+        window.addEventListener('resize', adjustButtonPositions);
+    </script>
+</body>
+</html>

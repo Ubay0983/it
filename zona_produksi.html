@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skematik Zona Produksi Cabang Paseh</title>
+    <style>
+        body {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, sans-serif;
+            background: linear-gradient(to right, #f1edec, #5704f0);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 150vh;
+        }
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background-color: linear-gradient(to right, #f1edec, #5704f0);
+}
+
+.header-logo {
+    height: 90px; /* Sesuaikan tinggi logo */
+    width: auto;  /* Mempertahankan rasio aspek logo */
+}
+
+.header-title {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 54px;
+    font-weight: bold;
+    margin: 0 20px; /* Memberikan jarak antara judul dan logo */
+    color: #f3f0f0
+}
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Tambah overflow untuk menghindari scroll setelah zoom */
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .image-container {
+            position: relative;
+            transition: transform 0.3s ease; /* Animasi saat zoom */
+            transform-origin: center; /* Set origin zoom di tengah */
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .button-overlay {
+            position: absolute;
+            top: 37%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .button-overlay button {
+            padding: 15px 30px;
+            background-color: transparent;
+            color: black;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            position: relative;
+            font-family: 'cambria', sans-serif; /* Ganti font di sini */
+        }
+
+        .button-overlay button:hover {
+            background-color: white;
+        }
+
+        .tooltip {
+            display: none;
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 11px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: left;
+            font-size: 16px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="logo Perumda.png" alt="Logo Perumda" class="header-logo">
+        <div class="header-title">Skematik Zona Produksi Cabang Paseh</div>
+        <img src="Artboard 1.png" alt="Logo Artboard1" class="header-logo">
+    </header>
+
+    <main>
+        <div class="image-container" id="zoomContainer">
+            <img src="PASEH-1.png" alt="Skematik Zona Produksi Cabang Paseh">
+
+            <div class="button-overlay" id="buttonOverlay">
+                <button id="zona2Button" style="top: -300px; left: 150px;">Zona Produksi 1A</button>
+                <button id="zona3Button" style="top: 200px; left: -250px;">Zona Produksi 1C</button>
+                <button id="zona4Button" style="top: 250px; left: 300px;">Zona Produksi 1D</button>
+            </div>
+
+            <div class="tooltip" id="tooltipBox">
+                <strong id="tooltipTitle">Data Produksi :</strong><br> <!-- Added tooltipTitle ID -->
+                Kapasitas Terpasang: <span id="KapasitasTerpasang">-</span><br>
+                Tahun Dibangun: <span id="tahunDibangun">-</span><br>
+                Jenis Pompa: <span id="JenisPompa">-</span><br>
+                Bangunan : <span id="FungsiBangunan">-</span><br>
+                Lokasi : <span id="Lokasi">-</span><br>
+                Elevasi : <span id="Elevasi">-</span><br>
+                Kapasitas Reservoir: <span id="KapasitasReservoir">-</span><br>
+            </div>            
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 IT Perumdam Tirta Medal Kabupaten Sumedang</p>
+    </footer>
+
+    <script>
+        const tooltipBox = document.getElementById('tooltipBox');
+        const zoomContainer = document.getElementById('zoomContainer');
+    
+        // Function to manually set data for each zone
+        function setZoneData(zonaTarget) {
+            let zoneData = {};
+    
+            // Set different data for each zone
+            if (zonaTarget === 'Zona Produksi 1A') {
+                zoneData = {
+                    KapasitasTerpasang: '38 liter/detik',
+                    tahunDibangun: '2023',
+                    JenisPompa: 'Pompa Submersible',
+                    FungsiBangunan: 'Sumur Dalam',
+                    Lokasi: 'Dusun Parumasan, Desa Paseh Kaler',
+                    Elevasi: '507',
+                    KapasitasReservoir: '700 m3'
+                };
+            } else if (zonaTarget === 'Zona Produksi 1C') {
+                zoneData = {
+                    KapasitasTerpasang: '7,5 liter/detik',
+                    tahunDibangun: '2018',
+                    JenisPompa: 'Pompa Submersible',
+                    FungsiBangunan: 'Broncaptering',
+                    Lokasi: 'Desa Haur Kuning',
+                    Elevasi: '373',
+                    KapasitasReservoir: '-'
+                };
+            } else if (zonaTarget === 'Zona Produksi 1D') {
+                zoneData = {
+                    KapasitasTerpasang: '5 liter/detik',
+                    tahunDibangun: '1995',
+                    JenisPompa: 'Pompa Submersible',
+                    FungsiBangunan: 'Broncaptering',
+                    Lokasi: 'Desa Cijambe',
+                    Elevasi: '242',
+                    KapasitasReservoir: '-'
+                };
+            }
+    
+            // Update the tooltip with the selected zone's data
+            document.getElementById('tooltipTitle').textContent = `Data ${zonaTarget}:`;
+            document.getElementById('KapasitasTerpasang').textContent = zoneData.KapasitasTerpasang;
+            document.getElementById('tahunDibangun').textContent = zoneData.tahunDibangun;
+            document.getElementById('JenisPompa').textContent = zoneData.JenisPompa;
+            document.getElementById('FungsiBangunan').textContent = zoneData.FungsiBangunan;
+            document.getElementById('Lokasi').textContent = zoneData.Lokasi;
+            document.getElementById('Elevasi').textContent = zoneData.Elevasi;
+            document.getElementById('KapasitasReservoir').textContent = zoneData.KapasitasReservoir;
+        }
+    
+        function showTooltip(button, zona) {
+            const rect = button.getBoundingClientRect();
+            tooltipBox.style.top = rect.top + window.scrollY - tooltipBox.offsetHeight - 10 + 'px';
+            tooltipBox.style.left = rect.left + window.scrollX + (rect.width / 2) - (tooltipBox.offsetWidth / 2) + 'px';
+            tooltipBox.style.display = 'block';
+    
+            // Call the setZoneData function to update the tooltip data
+            setZoneData(zona);
+        }
+    
+        function hideTooltip() {
+            tooltipBox.style.display = 'none';
+        }
+    
+        function openPage(zona) {
+            window.location.href = `${zona}.html`;
+        }
+    
+        const buttons = document.querySelectorAll('.button-overlay button');
+buttons.forEach(button => {
+    const zona = button.textContent;
+
+    button.addEventListener('mouseover', () => showTooltip(button, zona));
+    button.addEventListener('mouseout', hideTooltip);
+    
+    // Update to use the clean version of the zona string
+    button.addEventListener('click', () => openPage(zona));
+
+    // Functionality for drag-and-drop
+    button.addEventListener('mousedown', function (event) {
+        event.preventDefault();
+        let shiftX = event.clientX - button.getBoundingClientRect().left;
+        let shiftY = event.clientY - button.getBoundingClientRect().top;
+
+        function moveAt(pageX, pageY) {
+            button.style.left = pageX - shiftX + 'px';
+            button.style.top = pageY - shiftY + 'px';
+        }
+
+        function onMouseMove(event) {
+            moveAt(event.pageX, event.pageY);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+
+        document.onmouseup = function () {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.onmouseup = null; // Remove the mouseup function
+        };
+    });
+
+    button.ondragstart = function () {
+        return false; // Prevent default drag behavior
+    };
+});
+        // Zoom Functionality
+        let scale = 1;
+        zoomContainer.addEventListener('wheel', function (event) {
+            event.preventDefault();
+            const zoomAmount = event.deltaY > 0 ? 0.9 : 1.1; // Zoom in or out
+            scale *= zoomAmount;
+            zoomContainer.style.transform = `scale(${scale})`; // Set zoom level
+            zoomContainer.style.transformOrigin = 'center'; // Set origin for scaling
+        });
+    </script>    
+</body>
+
+</html>
